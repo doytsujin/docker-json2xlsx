@@ -1,18 +1,23 @@
-FROM ubuntu:14.04
+FROM ubuntu:16.04
 
 MAINTAINER Andrey L <an.lebedevsky@gmail.com>
 
 RUN apt-get update
-RUN apt-get install -y openjdk-7-jdk openjdk-7-jre gradle postgresql git-core
+RUN apt-get install -y default-jre default-jdk gradle postgresql git
+
+FROM library/postgres
+ENV POSTGRES_USER docker
+ENV POSTGRES_PASSWORD docker
+ENV POSTGRES_DB docker
+
 WORKDIR /opt
-RUN git clone  https://github.com/SEL-Columbia/json-to-xls
+RUN git clone https://github.com/lebedevsky/json-to-xls
 WORKDIR /opt/json-to-xls
-RUN gradle installApp
+RUN gradle installDist
+
 WORKDIR /opt/json-to-xls/build/install/json-to-xls/
 RUN ln -s /opt/json-to-xls/api.txt api.txt
-
-ADD start /start
-RUN chmod 0755 /start
+ADD json-to-xls.yml /json-to-xls.yml
+RUN bin/json-to-xls db migrate json-to-xls.yml
+RUN bin/json-to-xls server json-to-xls.yml
 EXPOSE 8080
-
-CMD ["/start"]
