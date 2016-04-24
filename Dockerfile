@@ -3,7 +3,7 @@ FROM ubuntu:16.04
 MAINTAINER Andrey L <an.lebedevsky@gmail.com>
 
 RUN apt-get update
-RUN apt-get install -y default-jre default-jdk gradle postgresql git
+RUN apt-get install -y default-jre default-jdk gradle postgresql git-core
 
 FROM library/postgres
 ENV POSTGRES_USER docker
