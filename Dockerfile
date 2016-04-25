@@ -19,9 +19,8 @@ ENV POSTGRES_PASSWORD docker
 ENV POSTGRES_DB docker
 
 # config
-RUN ln -s /opt/json-to-xls/api.txt /opt/json-to-xls/build/install/json-to-xls/api.txt
-ADD /opt/json-to-xls/build/install/json-to-xls/json-to-xls.yml /json-to-xls.yml
-ADD /opt/json-to-xls/build/install/json-to-xls/start /start
+ADD json-to-xls.yml /opt/json-to-xls/build/install/json-to-xls/json-to-xls.yml
+ADD start /opt/json-to-xls/build/install/json-to-xls/start
 RUN chmod 0755 /opt/json-to-xls/build/install/json-to-xls/start
 
 EXPOSE 8080
