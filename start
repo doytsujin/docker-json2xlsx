@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cd /opt/json-to-xls/build/install/json-to-xls/
+./bin/json-to-xls db migrate json-to-xls.yml
+./bin/json-to-xls server json-to-xls.yml

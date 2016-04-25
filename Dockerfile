@@ -1,23 +1,29 @@
-FROM ubuntu:16.04
+FROM ubuntu:14.04
 
 MAINTAINER Andrey L <an.lebedevsky@gmail.com>
 
+# update
 RUN apt-get update
-RUN apt-get install -y default-jre default-jdk gradle postgresql 
+RUN apt-get install -y git default-jre default-jdk gradle postgresql
 
+# code
+WORKDIR /opt
+RUN git clone https://github.com/lebedevsky/json-to-xls
+WORKDIR /opt/json-to-xls
+RUN gradle installApp
+
+# db
 FROM library/postgres
 ENV POSTGRES_USER docker
 ENV POSTGRES_PASSWORD docker
 ENV POSTGRES_DB docker
 
-WORKDIR /opt
-RUN git clone  https://github.com/lebedevsky/json-to-xls
-WORKDIR /opt/json-to-xls
-RUN gradle installDist
+# config
+RUN ln -s /opt/json-to-xls/api.txt /opt/json-to-xls/build/install/json-to-xls/api.txt
+ADD /opt/json-to-xls/build/install/json-to-xls/json-to-xls.yml /json-to-xls.yml
+ADD /opt/json-to-xls/build/install/json-to-xls/start /start
+RUN chmod 0755 /opt/json-to-xls/build/install/json-to-xls/start
 
-WORKDIR /opt/json-to-xls/build/install/json-to-xls/
-RUN ln -s /opt/json-to-xls/api.txt api.txt
-ADD json-to-xls.yml /json-to-xls.yml
-RUN bin/json-to-xls db migrate json-to-xls.yml
-RUN bin/json-to-xls server json-to-xls.yml
 EXPOSE 8080
+
+CMD ["/opt/json-to-xls/build/install/json-to-xls/start"]
